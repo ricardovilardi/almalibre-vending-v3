@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Almalibre · Vídeo de espera v2 con textos animados</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  @font-face{font-family:'Filson Pro';src:url('fonts/FilsonPro-Medium.otf') format('opentype');font-weight:500;font-display:block}
+  @font-face{font-family:'Filson Pro';src:url('fonts/FilsonPro-Bold.otf') format('opentype');font-weight:700;font-display:block}
+  @font-face{font-family:'Filson Pro';src:url('fonts/FilsonPro-Heavy.otf') format('opentype');font-weight:800;font-display:block}
+  :root{
+    --bg:#16101a; --panel:#211827; --line:#3a2c43; --ink:#f4eef6; --muted:#a898b0;
+    --acai:#4a1d5c; --accent:#c7a5ff; --btn:#f6c945;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,sans-serif}
+  .app{display:flex;gap:28px;padding:24px;min-height:100%;align-items:flex-start;justify-content:center;flex-wrap:wrap}
+  /* ---------- stage: 1080x1920 logical, scaled to fit ---------- */
+  .frame{position:relative;flex:0 0 auto;border-radius:22px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.5);background:#000}
+  .stage{position:absolute;left:0;top:0;width:1080px;height:1920px;transform-origin:0 0;overflow:hidden;
+         background:radial-gradient(120% 80% at 50% 30%,#6b3a7a,#2a1033 70%)}
+  .stage video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .placeholder{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;
+    color:#e9dcef;font:700 44px 'Filson Pro',sans-serif;text-align:center;padding:120px}
+  .placeholder small{font:400 30px Inter,sans-serif;color:#cdb8d6;line-height:1.4}
+  .placeholder .clock{font:800 120px 'Filson Pro',sans-serif;opacity:.25}
+  .scrim{position:absolute;left:0;right:0;bottom:0;height:560px;pointer-events:none;
+    background:linear-gradient(to bottom,rgba(26,8,32,0) 0%,rgba(26,8,32,.55) 55%,rgba(26,8,32,.8) 100%)}
+  .zone{position:absolute;left:0;right:0;bottom:0;height:384px;border-top:4px dashed rgba(255,255,255,.55);pointer-events:none;display:none}
+  .zone span{position:absolute;right:24px;top:10px;font:500 26px Inter;color:#fff;opacity:.8}
+  .show-zone .zone{display:block}
+  /* text layer sits in the bottom zone, above the button */
+  .textlayer{position:absolute;left:60px;right:60px;bottom:250px;height:196px}
+  .cue{position:absolute;left:0;right:0;top:0;display:flex;flex-direction:column;align-items:center;gap:6px}
+  .line{display:flex;justify-content:center;flex-wrap:nowrap;white-space:nowrap;
+    font:800 88px/1.08 'Filson Pro',sans-serif;letter-spacing:-1px;color:#fff;
+    text-shadow:0 4px 18px rgba(30,6,40,.55),0 2px 0 rgba(60,20,70,.35)}
+  .w{display:inline-block;white-space:pre;will-change:transform,opacity,filter}
+  .c{display:inline-block;will-change:transform,opacity}
+  .cta{position:absolute;left:50%;bottom:80px;transform:translateX(-50%);padding:34px 64px;border-radius:999px;
+    background:var(--btn);color:#3a1446;font:700 50px 'Filson Pro',sans-serif;letter-spacing:.5px;white-space:nowrap;
+    box-shadow:0 10px 0 #c99a1e,0 18px 40px rgba(0,0,0,.35);animation:pulse 2.4s ease-in-out infinite}
+  @keyframes pulse{0%,100%{transform:translateX(-50%) scale(1)}50%{transform:translateX(-50%) scale(1.04)}}
+  /* ---------- side panel ---------- */
+  .panel{width:420px;max-width:100%;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:22px}
+  h1{font:600 20px Inter;margin:0 0 4px}
+  .sub{color:var(--muted);font-size:13.5px;line-height:1.5;margin:0 0 18px}
+  .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+  button,.filebtn{appearance:none;border:1px solid var(--line);background:#2c2033;color:var(--ink);border-radius:10px;
+    padding:9px 14px;font:500 14px Inter;cursor:pointer}
+  button:hover,.filebtn:hover{border-color:var(--accent)}
+  button.primary,.filebtn.primary{background:var(--accent);color:#24112c;border-color:var(--accent)}
+  input[type=file]{display:none}
+  input[type=range]{width:100%;accent-color:var(--accent)}
+  .time{font:500 13px ui-monospace,Menlo,monospace;color:var(--muted);min-width:110px}
+  label.chk{display:flex;gap:8px;align-items:center;font-size:13.5px;color:var(--muted);cursor:pointer}
+  .cues{list-style:none;padding:0;margin:14px 0 0;display:flex;flex-direction:column;gap:6px}
+  .cues li{display:grid;grid-template-columns:78px 1fr;gap:4px 10px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;cursor:pointer}
+  .cues li:hover{border-color:#5c4767}
+  .cues li.on{border-color:var(--accent);background:#2e2238}
+  .cues .t{font:500 12px ui-monospace,Menlo,monospace;color:var(--muted);grid-row:span 2;padding-top:2px}
+  .cues .p{font-weight:600;font-size:14.5px}
+  .cues .e{font:400 12px ui-monospace,Menlo,monospace;color:var(--accent)}
+  .note{margin-top:16px;font-size:12.5px;color:var(--muted);line-height:1.55;border-top:1px solid var(--line);padding-top:14px}
+  .note a{color:var(--accent)}
+  .drop{outline:3px dashed var(--accent);outline-offset:-10px}
+  /* ?render : transparent 1080x1920 caption layer for frame-by-frame export */
+  body.render{background:transparent;overflow:hidden}
+  body.render .app{padding:0;display:block}
+  body.render .panel, body.render .placeholder, body.render .cta, body.render .zone, body.render video{display:none!important}
+  body.render .frame{border-radius:0;box-shadow:none;background:transparent}
+  body.render .stage{background:transparent}
+  body.render:not(.scrim) .scrim{display:none}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="frame" id="frame">
+    <div class="stage" id="stage">
+      <div class="placeholder" id="ph">
+        <div class="clock" id="phClock">0.0 s</div>
+        Carga el vídeo del bucle
+        <small>Botón «Cargar vídeo» o arrastra aquí el archivo<br>almalibre_almita_attract_loop_v2.mp4<br>Sin vídeo, los textos corren sobre este fondo con un reloj de 25 s.</small>
+      </div>
+      <video id="vid" muted playsinline loop preload="auto"></video>
+      <div class="scrim"></div>
+      <div class="textlayer" id="layer"></div>
+      <div class="cta">TOCA AQUÍ PARA PEDIR</div>
+      <div class="zone"><span>20 % inferior · zona de interfaz</span></div>
+    </div>
+  </div>
+
+  <aside class="panel">
+    <h1>Vídeo de espera v2 · textos</h1>
+    <p class="sub">Textos animados como capa de interfaz encima del vídeo, sincronizados con su tiempo. Animaciones de la skill <em>animate-text</em>, con desplazamientos y desenfoque ×2,5 para 1080×1920.</p>
+    <div class="row">
+      <label class="filebtn primary">Cargar vídeo<input type="file" id="file" accept="video/*"></label>
+      <button id="play">Pausa</button>
+      <span class="time" id="time">0.00 / 25.00 s</span>
+    </div>
+    <input type="range" id="scrub" min="0" max="25" step="0.01" value="0">
+    <div class="row" style="margin-top:12px">
+      <label class="chk"><input type="checkbox" id="zone"> Mostrar el 20 % inferior</label>
+      <label class="chk"><input type="checkbox" id="slow"> Cámara lenta (0,25×)</label>
+    </div>
+    <ul class="cues" id="cues"></ul>
+    <div class="note">
+      Las salidas usan siempre <code>blur-out-up</code> (480 ms). Tipografía: Filson Pro (Heavy en los textos, Bold en el botón).
+      Para cargarlo, descarga el vídeo <a href="https://d2ol7oe51mr4n9.cloudfront.net/user_3GiS7aPDEaM7erdep7XJw0qzZ0J/9fb7c09e-f7bf-4eae-a698-a66a73f8969c.mp4" target="_blank" rel="noopener">desde este enlace</a> y luego pulsa «Cargar vídeo».
+    </div>
+  </aside>
+</div>
+
+<script>
+(() => {
+  const DUR = 25;
+  const K = 2.5;                       // scale web px offsets to 1080x1920
+  const EXIT_MS = 480, EXIT_STAG = 24; // blur-out-up exit
+  const CUES = [
+    { s:3.2,  e:7.9,  fx:'kinetic-center-build', lines:['Del corazón','de la Amazonia.'] },
+    { s:8.1,  e:10.9, fx:'focus-blur-resolve',   lines:['Cremoso.','Intenso.'] },
+    { s:11.1, e:15.0, fx:'short-slide-right',    lines:['Puro sabor','a tu ritmo.'] },
+    { s:15.1, e:17.9, fx:'spring-scale-in',      lines:['Elige tus toppings.'] },
+    { s:18.4, e:20.9, fx:'per-character-rise',   lines:['¡Listo!'] },
+    { s:21.2, e:24.8, fx:'blur-out-up',          lines:['Tu açaí te espera.'] },
+  ];
+
+  const params = new URLSearchParams(location.search);
+  const RENDER = params.has('render');
+  if (RENDER){ document.documentElement.style.background='transparent'; document.body.classList.add('render'); if(params.has('scrim')) document.body.classList.add('scrim'); }
+  const $ = id => document.getElementById(id);
+  const frame=$('frame'), stage=$('stage'), vid=$('vid'), layer=$('layer'), ph=$('ph');
+  let hasVideo=false, playing=true, clockT=0, last=performance.now(), active=-1, built=null;
+
+  // ---------- fit stage ----------
+  function fit(){
+    const h = Math.min(window.innerHeight - 48, 900);
+    const s = RENDER ? 1 : Math.max(.2, h/1920);
+    stage.style.transform = `scale(${s})`;
+    frame.style.width = 1080*s+'px'; frame.style.height = 1920*s+'px';
+  }
+  addEventListener('resize', fit); fit();
+
+  // ---------- helpers ----------
+  const words = (t) => t.split(' ').map((w,i,a)=> i<a.length-1 ? w+' ' : w);
+  function anim(el, frames, opts){ const a = el.animate(frames, {fill:'both', ...opts}); a.pause(); return a; }
+  const blur = v => `blur(${v}px)`;
+
+  // ---------- build a cue: returns {root, enter:[anims], exit:[anims]} ----------
+  function build(cue){
+    const root = document.createElement('div'); root.className='cue';
+    const enter=[], exitEls=[]; let wIdx=0;
+    cue.lines.forEach((text, li) => {
+      const line = document.createElement('div'); line.className='line'+(cue.small?' sm':''); root.appendChild(line);
+      if (cue.fx==='per-character-rise'){
+        [...text].forEach((ch,i)=>{ const c=document.createElement('span'); c.className='c'; c.textContent=ch; line.appendChild(c); exitEls.push(c);
+          enter.push(anim(c,[{opacity:0,transform:`translateY(${32*K}px)`},{opacity:1,transform:'translateY(0)'}],
+            {duration:700, delay:i*24, easing:'cubic-bezier(0.2,0.8,0.2,1)'})); });
+        return;
+      }
+      const ws = words(text).map(w=>{ const s=document.createElement('span'); s.className='w'; s.textContent=w; line.appendChild(s); exitEls.push(s); return s; });
+      if (cue.fx==='focus-blur-resolve'){
+        enter.push(anim(line,[{opacity:0,transform:`translateY(${14*K}px) scale(1.01)`,filter:blur(14*K)},{opacity:1,transform:'none',filter:blur(0)}],
+          {duration:760, delay:li*1200, easing:'cubic-bezier(0.22,1,0.36,1)'}));
+      } else if (cue.fx==='spring-scale-in'){
+        ws.forEach((w,i)=>enter.push(anim(w,[{opacity:0,transform:'scale(0.7)'},{opacity:1,transform:'scale(1)'}],
+          {duration:360, delay:i*95, easing:'cubic-bezier(0.34,1.56,0.64,1)'})));
+      } else if (cue.fx==='blur-out-up'){
+        ws.forEach((w,i)=>enter.push(anim(w,[{opacity:0,transform:`translateY(${10*K}px)`,filter:blur(6*K)},{opacity:1,transform:'none',filter:blur(0)}],
+          {duration:560, delay:i*28, easing:'cubic-bezier(0.22,1,0.36,1)'})));
+      } else if (cue.fx==='short-slide-right'){
+        enter.push(anim(line,[{transform:`translateX(${-24*K}px)`,filter:blur(1.2*K)},{transform:'none',filter:blur(0)}],
+          {duration:520, easing:'cubic-bezier(0.2,0.8,0.2,1)'}));
+        ws.forEach(w=>{ enter.push(anim(w,[{opacity:0},{opacity:1}],{duration:260, delay:(wIdx++)*92, easing:'linear'})); });
+      } else if (cue.fx==='kinetic-center-build'){
+        // deferred: needs layout measurement after insertion
+        line._kinetic = ws;
+      }
+    });
+    return {root, enter, exitEls, cue};
+  }
+
+  function finishKinetic(b){
+    let base=0;
+    b.root.querySelectorAll('.line').forEach(line=>{
+      const ws=line._kinetic; if(!ws) return;
+      const full = line.getBoundingClientRect().width / currentScale();
+      const widths = ws.map(w=>w.getBoundingClientRect().width / currentScale());
+      const STEP = 360+220; const n=ws.length; const total=(n-1)*STEP+360; const lineBase=base; base+=n*STEP;
+      // container shift keeps the partially built line centred
+      const frames=[]; let acc=0;
+      ws.forEach((w,i)=>{
+        acc += widths[i];
+        const shift = (full-acc)/2;
+        const t0 = i*STEP/total, t1 = (i*STEP+360)/total;
+        if(i===0) frames.push({offset:0, transform:`translateX(${shift}px)`});
+        else frames.push({offset:t0, transform:frames[frames.length-1].transform});
+        frames.push({offset:t1, transform:`translateX(${shift}px)`, easing:'cubic-bezier(0.2,0.8,0.2,1)'});
+        b.enter.push(anim(w,[{opacity:0,transform:`translate(${40*K}px,${6*K}px) scale(0.992)`,filter:blur(3.5*K)},
+                              {opacity:1,transform:'none',filter:blur(0)}],
+          {duration:360, delay:lineBase+i*STEP, easing:'cubic-bezier(0.2,0.8,0.2,1)'}));
+      });
+      // fix easing placement: easing applies from a keyframe to the next
+      for(let i=0;i<frames.length-1;i++){ frames[i].easing = (i%2===1)? 'linear':'cubic-bezier(0.2,0.8,0.2,1)'; }
+      b.enter.push(anim(line, frames.map(f=>({offset:f.offset,transform:f.transform,easing:f.easing})), {duration:total, delay:lineBase}));
+    });
+  }
+  function currentScale(){ const m = stage.style.transform.match(/scale\(([\d.]+)\)/); return m?parseFloat(m[1]):1; }
+
+  function makeExit(b){
+    const n=b.exitEls.length;
+    const exitTotal = EXIT_MS + (n-1)*EXIT_STAG;
+    const exitStart = (b.cue.e-b.cue.s)*1000 - exitTotal;
+    // fill 'forwards' only, so the exit never overrides the enter before it starts
+    b.exit = b.exitEls.map((el,i)=>{ const a=el.animate([{opacity:1,filter:blur(0),translate:'0 0'},{opacity:0,filter:blur(8*K),translate:`0 ${-14*K}px`}],
+      {duration:EXIT_MS, delay:exitStart+i*EXIT_STAG, easing:'cubic-bezier(0.64,0,0.78,0)', fill:'forwards'}); a.pause(); return a; });
+  }
+
+  // ---------- sync ----------
+  function render(t){
+    const idx = CUES.findIndex(c=>t>=c.s && t<c.e);
+    if(idx!==active){
+      layer.innerHTML=''; built=null; active=idx;
+      document.querySelectorAll('#cues li').forEach((li,i)=>li.classList.toggle('on',i===idx));
+      if(idx>=0){ built=build(CUES[idx]); layer.appendChild(built.root); finishKinetic(built); makeExit(built); }
+    }
+    if(built){
+      const local=(t-built.cue.s)*1000;
+      built.enter.forEach(a=>a.currentTime=Math.max(0,local));
+      built.exit.forEach(a=>a.currentTime=Math.max(0,local));
+    }
+    $('time').textContent = `${t.toFixed(2)} / ${DUR.toFixed(2)} s`;
+    $('phClock').textContent = t.toFixed(1)+' s';
+    if(document.activeElement!==$('scrub')) $('scrub').value=t;
+  }
+
+  function now(){ return hasVideo ? vid.currentTime : clockT; }
+  function tick(ts){
+    const dt=(ts-last)/1000; last=ts;
+    if(!hasVideo && playing){ clockT=(clockT+dt*($('slow').checked?.25:1))%DUR; }
+    render(now());
+    requestAnimationFrame(tick);
+  }
+  const fontsReady = Promise.all(["800 88px 'Filson Pro'","700 50px 'Filson Pro'"].map(f=>document.fonts.load(f))).catch(()=>{});
+  if (RENDER){
+    // deterministic export: await window.captionsReady, then call window.renderAt(seconds) and screenshot
+    window.captionsReady = fontsReady.then(()=>true);
+    window.renderAt = (t) => { render(t); return new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(()=>r(true)))); };
+    window.CAPTION_CUES = CUES;
+  } else {
+    fontsReady.then(()=>requestAnimationFrame(tick));
+  }
+
+  // ---------- controls ----------
+  function load(file){
+    if(!file) return;
+    vid.src=URL.createObjectURL(file); hasVideo=true; ph.style.display='none';
+    vid.playbackRate=$('slow').checked?.25:1;
+    if(playing) vid.play().catch(()=>{});
+  }
+  $('file').addEventListener('change',e=>load(e.target.files[0]));
+  frame.addEventListener('dragover',e=>{e.preventDefault();frame.classList.add('drop')});
+  frame.addEventListener('dragleave',()=>frame.classList.remove('drop'));
+  frame.addEventListener('drop',e=>{e.preventDefault();frame.classList.remove('drop');load(e.dataTransfer.files[0]);});
+  $('play').addEventListener('click',()=>{
+    playing=!playing; $('play').textContent=playing?'Pausa':'Reproducir';
+    if(hasVideo){ playing?vid.play().catch(()=>{}):vid.pause(); }
+  });
+  $('scrub').addEventListener('input',e=>{ const t=parseFloat(e.target.value); if(hasVideo) vid.currentTime=t; else clockT=t; });
+  $('zone').addEventListener('change',e=>stage.classList.toggle('show-zone',e.target.checked));
+  $('slow').addEventListener('change',e=>{ vid.playbackRate=e.target.checked?.25:1; });
+
+  const ul=$('cues');
+  CUES.forEach(c=>{
+    const li=document.createElement('li');
+    li.innerHTML=`<span class="t">${c.s.toFixed(1)}–${c.e.toFixed(1)} s</span><span class="p">${c.lines.join(' ')}</span><span class="e">${c.fx}</span>`;
+    li.addEventListener('click',()=>{ const t=c.s+0.01; if(hasVideo) vid.currentTime=t; else clockT=t; });
+    ul.appendChild(li);
+  });
+})();
+</script>
+</body>
+</html>

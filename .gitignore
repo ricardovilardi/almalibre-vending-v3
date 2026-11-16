@@ -1,2 +1,7 @@
 build/
 .DS_Store
+
+# Filson Pro is a commercial font: keep it out of the public repo until the licence is confirmed
+design/video-v3/captions/fonts/
+# handoff keeps the private source-video link
+design/video-v3/HANDOFF-v3.md
