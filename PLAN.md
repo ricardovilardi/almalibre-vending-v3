@@ -25,7 +25,7 @@ Note: the provider's "alpha" full screens are fully opaque, apart from a 1 px ed
 | 5 | Summary | payment_en/fr.jpg | #FFFCF5, text only: "Resumen de tu pedido" + "Revisa que todo esté bien" | "Seleccionado: N bowls" + order text, buttons |
 | 6 | Payment | – | **on hold, no clear path from the provider yet** | – |
 | 7 | Preparing | outing_en.jpg, outing_fr.png + outing_process_1–4.png 485x74 | #FFFCF5, purple #4A1F6E text, light-beige #F5F1E8 panels; progress bar: purple outline, light-purple #8B2FC9 fill; texts centred | progress steps (loading state); cup = assets/bowls-1.png |
-| 8 | Sold out | sold_out_en.png, sold_out_fr.png | full-bleed image, no text (placeholder: Amazon photo). Back button maybe later | – |
+| 8 | Sold out | sold_out_en.png, sold_out_fr.png | full-bleed claymation image, no text: sad Almita showing an empty cup (design/img/sold-out-almita.png, from assets/higgsfield/soldout-B.png). Preferred: looping video export/video/onctuo_sold_out_loop.mp4 (H.264 1080x1920, 24 fps, 6.5 s, no audio; Almita peeks into the cup, then looks at the camera; from assets/higgsfield/soldout-loop-raw.mp4, MiniMax H3, first frame = last frame = the PNG). The PNG is the fallback if the app cannot play video here. Back button maybe later | – |
 | – | Common mark (hidden) | label_common_mark.png 308x344 | fully transparent | – |
 
 ## App colours to send to the provider
