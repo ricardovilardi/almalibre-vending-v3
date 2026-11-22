@@ -1,0 +1,37 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="base.css">
+<script>if(location.search.includes("zones"))document.documentElement.classList.add("show-zones")</script>
+<style>
+.t{position:absolute;left:80px;font-weight:700;font-size:96px;line-height:1.02;letter-spacing:-1px;color:var(--brand-text)}
+.s{position:absolute;left:84px;font-weight:400;font-size:42px;color:var(--brand-text)}
+#almita{position:absolute;right:-2px;top:120px;width:640px}
+/* simulated app layer (?app): positions measured on the machine photo */
+.app{display:none;position:absolute;border:3px solid #2a2a2a;border-radius:10px;background:rgba(255,255,255,.35)}
+.applabel{display:none;position:absolute;left:0;right:0;text-align:center;font:700 44px Outfit;color:var(--brand-text)}
+.showapp .app,.showapp .applabel{display:block}
+</style>
+<script>if(location.search.includes("app"))document.documentElement.classList.add("showapp")</script>
+</head><body><div class="screen light">
+  <div class="t" style="top:130px">Personaliza<br>tu açaí</div>
+  <div class="s" style="top:345px">Elige tus toppings</div>
+  <img id="almita" src="img/almita-peek-A.png">
+  <div class="zone" style="left:60px;right:60px;top:780px;height:900px">APP: títulos Sólidos/Líquidos + rejilla toppings</div>
+  <div class="zone" style="left:60px;right:60px;top:1730px;height:150px">APP: volver · precio · siguiente</div>
+  <div class="applabel" style="top:800px">Sólidos</div>
+  <div class="app" style="left:112px;top:883px;width:220px;height:224px"></div>
+  <div class="app" style="left:412px;top:883px;width:220px;height:224px"></div>
+  <div class="app" style="left:712px;top:883px;width:220px;height:224px"></div>
+  <div class="applabel" style="top:1250px">Líquidos</div>
+  <div class="app" style="left:122px;top:1340px;width:212px;height:210px"></div>
+  <div class="app" style="left:412px;top:1340px;width:212px;height:210px"></div>
+  <div class="app" style="left:712px;top:1340px;width:212px;height:210px"></div>
+  <div class="app" style="left:86px;top:1756px;width:262px;height:105px;border-radius:60px"></div>
+  <div class="app" style="left:700px;top:1756px;width:270px;height:105px;border-radius:60px;background:#FAB417"></div>
+</div>
+<script>
+// per-pose fit: alpha bbox (in the 752x1344 source) mapped to top 120..770, right edge flush
+const fit={A:[61,758],B:[89,786],C:[35,1258],D:[146,1006],E:[134,882],F:[106,872],G:[50,1233],H:[66,1198],I:[63,1215],J:[70,1213]};
+const v=new URLSearchParams(location.search).get("v")||"A", el=document.getElementById("almita");
+el.src="img/almita-peek-"+v+".png"; const k=parseFloat(new URLSearchParams(location.search).get("k")||"1"); const [y0,y1]=fit[v], s=650*k/(y1-y0);
+const qs=new URLSearchParams(location.search); if(qs.get("s")){const ss=parseFloat(qs.get("s")); el.style.width=(752*ss)+"px"; el.style.top=(110-y0*ss)+"px";} else {el.style.width=(752*s)+"px"; el.style.top=(770-y1*s)+"px";}
+</script>
+</body></html>

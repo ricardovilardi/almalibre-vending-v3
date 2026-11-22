@@ -1,0 +1,12 @@
+<!doctype html><html><head><meta charset="utf-8"><link rel="stylesheet" href="base.css">
+<script>if(location.search.includes("zones"))document.documentElement.classList.add("show-zones")</script>
+<style>#bg{position:absolute;inset:0;background:center/cover no-repeat}
+.t{position:absolute;left:0;right:0;text-align:center;font-weight:700;font-size:84px;line-height:1;letter-spacing:-.5px;color:var(--brand-text)}
+.s{position:absolute;left:0;right:0;text-align:center;font-weight:400;font-size:40px;color:var(--brand-text)}
+.ref #bg{opacity:.5}</style></head><body><div class="screen light">
+<div id="bg"></div>
+<div class="t" style="top:127px">Personaliza tu açaí</div>
+<div class="s" style="top:242px">Elige tus toppings</div>
+<div class="zone" style="left:60px;right:60px;top:780px;height:900px">APP: títulos Sólidos/Líquidos + rejilla toppings</div>
+<div class="zone" style="left:60px;right:60px;top:1730px;height:150px">APP: volver · precio · siguiente</div>
+</div><script>const q=new URLSearchParams(location.search);document.getElementById("bg").style.backgroundImage="url(img/"+(q.get("bg")||"book-almita-L.png")+")"</script></body></html>
