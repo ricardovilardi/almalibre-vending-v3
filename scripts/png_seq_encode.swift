@@ -1,6 +1,7 @@
 // Encode a PNG sequence (RGBA) to video.
-// Usage: png_seq_encode <frames_dir> <out> <mode> [fps]
-//   mode = cream  -> H.264 MP4, frames composited over #FFFCF5
+// Usage: png_seq_encode <frames_dir> <out> <mode> [fps] [bg hex]
+//   mode = cream  -> H.264 MP4, frames composited over #FFFCF5 (or the given hex; H.264's YUV round trip
+//                    shifts it by ~1 level, so pass the value that decodes to the screen colour)
 //   mode = alpha  -> HEVC-with-alpha MOV (keeps transparency)
 import Foundation
 import AVFoundation
@@ -17,6 +18,9 @@ try? FileManager.default.removeItem(at: out)
 let alpha = mode == "alpha"
 let w = try AVAssetWriter(outputURL: out, fileType: alpha ? .mov : .mp4)
 var settings: [String: Any] = [AVVideoWidthKey: W, AVVideoHeightKey: H]
+// explicit BT.709 tags so players don't guess the colour space (an untagged file can shift the cream)
+settings[AVVideoColorPropertiesKey] = [AVVideoColorPrimariesKey: AVVideoColorPrimaries_ITU_R_709_2,
+    AVVideoTransferFunctionKey: AVVideoTransferFunction_ITU_R_709_2, AVVideoYCbCrMatrixKey: AVVideoYCbCrMatrix_ITU_R_709_2]
 if alpha {
     settings[AVVideoCodecKey] = AVVideoCodecType.hevcWithAlpha
     settings[AVVideoCompressionPropertiesKey] = [AVVideoQualityKey: 0.85,
@@ -34,7 +38,10 @@ let ad = AVAssetWriterInputPixelBufferAdaptor(assetWriterInput: inp, sourcePixel
 w.add(inp); w.startWriting(); w.startSession(atSourceTime: .zero)
 let cs = CGColorSpace(name: CGColorSpace.sRGB)!
 let ctx = CIContext(options: [.workingColorSpace: cs, .outputColorSpace: cs])
-let cream = CIImage(color: CIColor(red: 1.0, green: 252/255, blue: 245/255)).cropped(to: first.extent)
+let hex = a.count > 5 ? a[5] : "FFFCF5"
+let hv = Int(hex, radix: 16)!
+let cream = CIImage(color: CIColor(red: CGFloat((hv >> 16) & 255) / 255, green: CGFloat((hv >> 8) & 255) / 255,
+                                   blue: CGFloat(hv & 255) / 255)).cropped(to: first.extent)
 for (i, f) in files.enumerated() {
     var img = CIImage(contentsOf: f)!
     if !alpha { img = img.composited(over: cream) }

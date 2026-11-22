@@ -47,6 +47,10 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
 .product-slot{position:absolute;left:120px;top:330px;width:840px;height:900px;border-radius:48px;background:#F5F1E8;
   display:flex;align-items:center;justify-content:center}
 .product-slot img{width:760px;height:760px;object-fit:contain}
+.product-slot video{width:100%;height:100%;object-fit:cover;border-radius:48px;mix-blend-mode:multiply}
+/* the machine plays the product video in a 16:9 strip (960×540) with no box behind it — same here */
+[data-screen="welcome"] .product-slot{left:60px;top:510px;width:960px;height:540px;border-radius:0;background:none}
+[data-screen="welcome"] .product-slot video{object-fit:contain;border-radius:0;mix-blend-mode:normal}
 .start{position:absolute;left:50%;top:1715px;transform:translateX(-50%);font-size:44px;padding:36px 70px;white-space:nowrap}
 .start:active{transform:translateX(-50%) scale(.96)}
 
@@ -66,6 +70,20 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
 .card .mark{position:absolute;top:-30px;right:-30px;width:120px;height:120px;opacity:0;transform:scale(.6);transition:.2s}
 .card.on{border-color:var(--btn)}
 .card.on .mark{opacity:1;transform:scale(1)}
+
+/* toppings layout as the client's reference (and the real app): two rows of small square tiles in the
+   lower half, leaving the top-right free for Almita. Labels ~y800 / ~y1280, tiles 220px, name below. */
+.book-scroll{left:110px;right:110px;top:770px;height:930px;gap:22px;padding:0}
+.book-scroll .grid{grid-template-columns:repeat(3,220px);gap:80px;justify-content:center}
+.book-scroll .grid + .sec-label{margin-top:34px}
+.book-scroll .card{background:none;border:0;border-radius:0;padding:0;width:220px}
+.book-scroll .card .ph{width:220px;height:220px;aspect-ratio:auto;background:var(--card);border:4px solid transparent;
+  border-radius:28px;transition:border-color .2s}
+.book-scroll .card.on .ph{border-color:var(--btn)}
+.book-scroll .card .cap{font-size:15px;margin-top:8px}
+.book-scroll .card .nm{font-size:23px;min-height:54px;margin-top:4px;justify-content:center}
+.book-scroll .card .pr{font-size:20px;margin-top:2px}
+.book-scroll .card .mark{top:-24px;right:-24px;width:84px;height:84px}
 
 /* bowl quantity */
 .qty{position:absolute;left:60px;right:60px;top:700px;height:500px;display:flex;justify-content:space-around;align-items:center}

@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="styles.css?v=20261122">
 </head>
 <body>
 <div class="stage-wrap">
@@ -25,13 +25,20 @@
     <!-- 2 · Personaliza (fondo welcome_*: logo + info; app: slot imagen/vídeo + botón) -->
     <section class="screen light" data-screen="welcome">
       <img class="bg" src="export/onctuo_label_welcome_vanille_en.jpg" alt="">
-      <div class="product-slot"><img src="assets/bowls-1.png" alt="Bowl de açaí Almalibre"></div>
+      <!-- product video in the machine's 16:9 strip: transparent HEVC first (Safari / Chrome on Mac),
+           H.264 on the cream background as the fallback for browsers without alpha video -->
+      <div class="product-slot"><video class="loop" muted loop playsinline aria-label="Pote de açaí Almalibre girando">
+        <source src="export/video/onctuo_welcome_cup_loop_alpha.mov">
+        <source src="export/video/onctuo_welcome_cup_loop.mp4" type="video/mp4">
+      </video></div>
       <button class="app-btn start" data-go="book">TOCA AQUÍ PARA PEDIR</button>
     </section>
 
     <!-- 3 · Toppings (book) -->
     <section class="screen light" data-screen="book">
-      <img class="bg" src="export/onctuo_label_book_en.jpg" alt="">
+      <!-- background video (Almita invites to choose): plays ONCE each time the screen opens, then rests on its
+           last frame, which is the same as the first frame and the JPG fallback -->
+      <video class="bg loop" src="export/video/onctuo_book_loop.mp4" poster="export/onctuo_label_book_en.jpg" muted playsinline></video>
       <div class="book-scroll">
         <img class="sec-label" src="export/onctuo_label_book_topping_en.png" alt="Sólidos">
         <div class="grid" id="gridSolid"></div>
@@ -83,7 +90,7 @@
 
     <!-- Agotado -->
     <section class="screen" data-screen="soldout">
-      <img class="bg" src="export/onctuo_label_sold_out_en.png" alt="">
+      <video class="bg loop" src="export/video/onctuo_sold_out_loop.mp4" poster="export/onctuo_label_sold_out_en.png" muted loop playsinline></video>
     </section>
 
   </div>
@@ -101,6 +108,6 @@
   <button data-go="soldout">Agotado</button>
   <button data-go="attract">Reiniciar</button>
 </nav>
-<script src="app.js"></script>
+<script src="app.js?v=20261122"></script>
 </body>
 </html>

@@ -13,6 +13,7 @@ def opt(name, default):
 SAMPLES = int(opt("--samples", "128"))
 SAVE = opt("--save", None)
 FRAMES = int(opt("--frames", "192"))          # frames for one full 360° turn
+LENS = float(opt("--lens", "85"))             # 42.5 = cup at half size, same perspective
 F0, F1 = (int(rest[0]), int(rest[1])) if len(rest) >= 2 else (1, 1)
 
 R_TOP, R_BOT, H = 1.0, 0.85, 1.48
@@ -244,7 +245,7 @@ for fc in root.animation_data.action.fcurves:
     for kp in fc.keyframe_points: kp.interpolation = "LINEAR"
 
 # ---------- camera ----------
-cam_d = bpy.data.cameras.new("cam"); cam_d.lens = 85; cam_d.sensor_fit = "HORIZONTAL"
+cam_d = bpy.data.cameras.new("cam"); cam_d.lens = LENS; cam_d.sensor_fit = "HORIZONTAL"
 cam = bpy.data.objects.new("cam", cam_d); sc.collection.objects.link(cam); sc.camera = cam
 target = Vector((0, 0, 1.0)); elev = math.radians(13); dist = 11.6
 cam.location = target + Vector((0, -dist * math.cos(elev), dist * math.sin(elev)))

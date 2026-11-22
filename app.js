@@ -43,6 +43,11 @@ function go(name) {
   $$('.screen').forEach(s => s.classList.toggle('active', s.dataset.screen === name));
   const v = $('#attractVideo');
   name === 'attract' ? (v.currentTime = 0, v.play().catch(() => {})) : v.pause();
+  // looping screen videos (welcome cup, toppings Almita, sold out): play only on the visible screen
+  $$('video.loop').forEach(lv => {
+    if (lv.closest('.screen').dataset.screen === name) { lv.currentTime = 0; lv.play().catch(() => {}); }
+    else lv.pause();
+  });
   if (name === 'attract') { state.picked.clear(); state.bowls = 1; }
   if (name === 'book') renderBook();
   if (name === 'order') renderQty();
