@@ -7,19 +7,17 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="styles.css?v=20261122b">
+<link rel="stylesheet" href="styles.css?v=20261125">
 </head>
 <body>
 <div class="stage-wrap">
   <div class="kiosk" id="kiosk">
 
-    <!-- 1 · Bienvenida: solo vídeo -->
-    <section class="screen" data-screen="attract">
-      <video id="attractVideo" src="assets/video/attract.mp4?v=8" poster="assets/attract-poster.jpg" muted loop playsinline autoplay></video>
-      <button class="tap-cta" aria-label="Toca la pantalla para continuar">
-        <span>TOCA LA PANTALLA<br>PARA CONTINUAR</span>
-        <svg viewBox="0 0 64 64" aria-hidden="true"><g fill="none" stroke="#4A1F6E" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><path d="M26 34V14a4 4 0 0 1 8 0v16"/><path d="M34 28a4 4 0 0 1 8 0v4"/><path d="M42 31a4 4 0 0 1 8 0v9c0 9-6 16-15 16h-2c-6 0-9-3-12-7l-7-10a4 4 0 0 1 6-5l6 5"/><path d="M30 2v5M18 6l3 4M42 6l-3 4M13 16h5M42 16h5"/></g></svg>
-      </button>
+    <!-- 1 · Bienvenida: solo vídeo. El botón «Toca la pantalla para continuar», los textos y el sonido van
+         dentro del MP4 (uno por idioma). Autoplay en silencio: el navegador solo deja sonar el vídeo
+         después de un toque (botón «Sonido» de la barra del prototipo). -->
+    <section class="screen" data-screen="attract" aria-label="Toca la pantalla para continuar">
+      <video id="attractVideo" src="assets/video/attract_es.mp4?v=9" poster="assets/attract-poster_es.jpg" muted loop playsinline autoplay></video>
     </section>
 
     <!-- 2 · Personaliza (fondo welcome_*: logo + info; app: slot imagen/vídeo + botón) -->
@@ -105,9 +103,17 @@
       <option value="crema">con Crema de cacahuete</option>
     </select>
   </label>
+  <label>Idioma
+    <select id="langSelect">
+      <option value="es">Español</option>
+      <option value="en">English</option>
+      <option value="fr">Français</option>
+    </select>
+  </label>
+  <button id="soundBtn" aria-pressed="false">Sonido: no</button>
   <button data-go="soldout">Agotado</button>
   <button data-go="attract">Reiniciar</button>
 </nav>
-<script src="app.js?v=20261122b"></script>
+<script src="app.js?v=20261125"></script>
 </body>
 </html>

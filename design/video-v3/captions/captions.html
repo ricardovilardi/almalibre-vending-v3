@@ -119,16 +119,27 @@
   const DUR = 25;
   const K = 2.5;                       // scale web px offsets to 1080x1920
   const EXIT_MS = 480, EXIT_STAG = 24; // blur-out-up exit
-  const CUES = [
-    { s:3.2,  e:7.9,  fx:'kinetic-center-build', lines:['Del corazón','de la Amazonia.'] },
-    { s:8.1,  e:10.9, fx:'focus-blur-resolve',   lines:['Cremoso.','Intenso.'] },
-    { s:11.1, e:15.0, fx:'short-slide-right',    lines:['Puro sabor','a tu ritmo.'] },
-    { s:15.1, e:17.9, fx:'spring-scale-in',      lines:['Elige tus toppings.'] },
-    { s:18.4, e:20.9, fx:'per-character-rise',   lines:['¡Listo!'] },
-    { s:21.2, e:24.8, fx:'blur-out-up',          lines:['Tu açaí te espera.'] },
-  ];
-
+  // copy per language (?lang=es|en|fr); same timing and effects in every language
+  const COPY = {
+    es: [['Del corazón','de la Amazonia.'], ['Cremoso.','Intenso.'], ['Puro sabor','a tu ritmo.'],
+         ['Elige tus toppings.'], ['¡Listo!'], ['Tu açaí te espera.']],
+    en: [['From the heart','of the Amazon.'], ['Creamy.','Intense.'], ['Pure flavour,','your way.'],
+         ['Pick your toppings.'], ['Ready!'], ['Your açaí awaits.']],
+    fr: [['Du cœur','de l’Amazonie.'], ['Crémeux.','Intense.'], ['Pure saveur,','à ton rythme.'],
+         ['Choisis tes toppings.'], ['C’est prêt !'], ['Ton açaí t’attend.']],
+  };
   const params = new URLSearchParams(location.search);
+  const LANG = COPY[params.get('lang')] ? params.get('lang') : 'es';
+  const TIMING = [
+    { s:3.2,  e:7.9,  fx:'kinetic-center-build' },
+    { s:8.1,  e:10.9, fx:'focus-blur-resolve' },
+    { s:11.1, e:15.0, fx:'short-slide-right' },
+    { s:15.1, e:17.9, fx:'spring-scale-in' },
+    { s:18.4, e:20.9, fx:'per-character-rise' },
+    { s:21.2, e:24.8, fx:'blur-out-up' },
+  ];
+  const CUES = TIMING.map((c, i) => ({ ...c, lines: COPY[LANG][i] }));
+
   const RENDER = params.has('render');
   if (RENDER){ document.documentElement.style.background='transparent'; document.body.classList.add('render'); if(params.has('scrim')) document.body.classList.add('scrim'); }
   const $ = id => document.getElementById(id);

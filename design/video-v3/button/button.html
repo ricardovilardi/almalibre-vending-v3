@@ -1,0 +1,17 @@
+<!doctype html><html><head><meta charset="utf-8">
+<!-- Tap button burned into the attract video. ?lang=es|en|fr. Transparent 1080x1920 layer, same look as the
+     prototype's .tap-cta (styles.css): cream pill, purple Outfit 800, hand icon, at top 1705 px. -->
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@800&display=block" rel="stylesheet">
+<style>
+html,body{margin:0;width:1080px;height:1920px;background:transparent;overflow:hidden}
+.tap-cta{position:absolute;left:50%;top:1705px;transform:translateX(-50%);display:flex;align-items:center;gap:30px;
+  background:#FFFCF5;color:#4A1F6E;border-radius:999px;padding:26px 44px 26px 64px;white-space:nowrap;
+  font:800 40px/1.08 Outfit,sans-serif;letter-spacing:.5px;text-align:left;box-shadow:0 14px 36px rgba(36,20,46,.35)}
+.tap-cta svg{width:84px;height:84px;flex:none}
+</style></head><body>
+<div class="tap-cta"><span id="t"></span>
+<svg viewBox="0 0 64 64" aria-hidden="true"><g fill="none" stroke="#4A1F6E" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><path d="M26 34V14a4 4 0 0 1 8 0v16"/><path d="M34 28a4 4 0 0 1 8 0v4"/><path d="M42 31a4 4 0 0 1 8 0v9c0 9-6 16-15 16h-2c-6 0-9-3-12-7l-7-10a4 4 0 0 1 6-5l6 5"/><path d="M30 2v5M18 6l3 4M42 6l-3 4M13 16h5M42 16h5"/></g></svg></div>
+<script>
+const T={es:'TOCA LA PANTALLA<br>PARA CONTINUAR',en:'TOUCH THE SCREEN<br>TO CONTINUE',fr:'TOUCHE L’ÉCRAN<br>POUR CONTINUER'};
+const l=new URLSearchParams(location.search).get('lang'); document.getElementById('t').innerHTML=T[l]||T.es;
+</script></body></html>

@@ -132,6 +132,21 @@ $('#slotSelect').addEventListener('change', e => {
   if (state.screen === 'payment') renderSummary();
 });
 
+// intro video: one MP4 per language (captions + button + sound inside); sound only after a tap (browser rule)
+const attract = $('#attractVideo');
+$('#langSelect').addEventListener('change', e => {
+  const l = e.target.value;
+  attract.poster = `assets/attract-poster_${l}.jpg`;
+  attract.src = `assets/video/attract_${l}.mp4?v=9`;
+  if (state.screen === 'attract') attract.play().catch(() => {});
+});
+$('#soundBtn').addEventListener('click', e => {
+  attract.muted = !attract.muted;
+  e.currentTarget.textContent = 'Sonido: ' + (attract.muted ? 'no' : 'sí');
+  e.currentTarget.setAttribute('aria-pressed', String(!attract.muted));
+  if (state.screen === 'attract') attract.play().catch(() => {});
+});
+
 // preload backgrounds
 ['welcome_vanille_en.jpg', 'book_en.jpg', 'order_en.jpg', 'payment_en.jpg', 'outing_en.jpg', 'sold_out_en.png']
   .forEach(f => { new Image().src = 'export/onctuo_label_' + f; });
