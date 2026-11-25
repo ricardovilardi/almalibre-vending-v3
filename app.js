@@ -137,7 +137,7 @@ const attract = $('#attractVideo');
 $('#langSelect').addEventListener('change', e => {
   const l = e.target.value;
   attract.poster = `assets/attract-poster_${l}.jpg`;
-  attract.src = `assets/video/attract_${l}.mp4?v=9`;
+  attract.src = `assets/video/attract_${l}.mp4?v=10`;
   if (state.screen === 'attract') attract.play().catch(() => {});
 });
 $('#soundBtn').addEventListener('click', e => {

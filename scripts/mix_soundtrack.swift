@@ -1,5 +1,5 @@
 // Mix the intro soundtrack: looping background music + timed sound effects, 25.0 s, 48 kHz stereo WAV.
-// Usage: mix_soundtrack <raw_dir> <out.wav> [variant a|b] [bird file] [music RMS]
+// Usage: mix_soundtrack <raw_dir> <out.wav> [variant a|b] [bird file] [music RMS] [hello file] [hello level]
 // The music is cut to 25 s and its first 2 s are cross-faded with what follows second 25, so the
 // track loops with the video without a click. Effects that run past 25 s wrap to the start.
 import AVFoundation
@@ -8,7 +8,9 @@ let args = CommandLine.arguments
 let raw = URL(fileURLWithPath: args[1]), out = URL(fileURLWithPath: args[2])
 let variant = args.count > 3 ? args[3] : "a"
 let bird = args.count > 4 ? args[4] : "sfx12b_bird_trim.wav"
+let hello = args.count > 6 ? args[6] : "sfx14b_aracari_trim.wav"   // soft lettered-aracari call (approved 2026-11-25)
 let musicRMS = Float(args.count > 5 ? args[5] : "0.03")!
+let helloLevel = Float(args.count > 7 ? args[7] : "0.24")!
 let SR = 48000.0, DUR = 25.0, N = Int(SR * DUR)
 
 func load(_ name: String) -> [[Float]] {
@@ -43,7 +45,7 @@ for c in 0..<2 { for i in 0..<N {
 
 // ---- sound effects: (file, start s, level relative to a -3 dBFS peak) ----
 let cues: [(String, Double, Float)] = [
-    ("sfx01\(variant)_hello",    0.35, 0.45),   // Almita waves hello
+    (hello,                    0.35, helloLevel),   // Almita waves hello: soft Amazon bird (aracari), quieter than the other effects
     ("sfx02\(variant)_steps",    3.95, 0.32),   // walks to the palm
     ("sfx03\(variant)_palm",     6.10, 0.50),   // shakes the palm, berries fall in the cup
     ("sfx04\(variant)_whoosh",   9.05, 0.42),   // cup flips
