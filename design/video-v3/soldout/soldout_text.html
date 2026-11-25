@@ -3,8 +3,8 @@
 <title>Agotado · texto animado</title>
 <!-- Text layer for the sold-out loop (export/video/onctuo_sold_out_loop.mp4, 1080×1920, 6.54 s).
      Layout = Figma "agotado" (node 225:1154): one lockup per language.
-     Motion = kinetic "drop and stack" reference: the headline words fall in one by one from the top,
-     bottom word first, land with a small bounce and nudge the words already stacked; the subline pops in;
+     Motion = kinetic "drop and stack" reference: the headline words fall in one by one from the top in reading order,
+     first word first, land with a small bounce and nudge the words already stacked; the subline pops in;
      at the end everything drops out of the bottom so the 6.54 s loop starts empty again.
      ?lang=es|en|fr  ?t=<s> (freeze)  ?bg=<image> (preview over a video frame)  ?render (transparent, driven by renderAt) -->
 <style>
@@ -21,7 +21,7 @@
 <script>
 // geometry straight from Figma (px in the lockup frame; rot = Figma rotation, counter-clockwise)
 const L = {
- es:{w:754,h:846,drop:['volado','ha ','Açaí','el','Hoy'],sub:['Lo sentimos','Vuelve pronto,','te esperamos'],words:[
+ es:{w:754,h:846,drop:['Hoy','el','Açaí','ha ','volado'],sub:['Lo sentimos','Vuelve pronto,','te esperamos'],words:[
   {t:'Lo sentimos',x:149.3,y:610.4,w:452,h:93,rot:2.33,size:72,wt:700},
   {t:'Vuelve pronto,',x:0,y:657.2,w:754,h:124,rot:0,size:96,wt:700},
   {t:'te esperamos',x:159.6,y:743.5,w:452,h:83,rot:-2.5,size:64,wt:700},
@@ -30,7 +30,7 @@ const L = {
   {t:'ha ',x:21,y:363,w:127,h:124,rot:20.76,size:96,wt:800},
   {t:'el',x:163,y:125.1,w:72,h:83,rot:7.26,size:64,wt:700},
   {t:'Hoy',x:191.9,y:0,w:272,h:166,rot:-12.85,size:128,wt:700}]},
- en:{w:814,h:832,drop:['AWAY','flew','Açaí','our','Today'],sub:['Sorry!','Come back soon',"we'll be waiting"],words:[
+ en:{w:814,h:832,drop:['Today','our','Açaí','flew','AWAY'],sub:['Sorry!','Come back soon',"we'll be waiting"],words:[
   {t:'Sorry!',x:278.2,y:590.4,w:254,h:93,rot:2.33,size:72,wt:700},
   {t:'Come back soon',x:0,y:641.2,w:814,h:124,rot:0,size:96,wt:700},
   {t:"we'll be waiting",x:150.7,y:725.8,w:531,h:83,rot:-2.5,size:64,wt:700},
@@ -39,7 +39,7 @@ const L = {
   {t:'flew',x:92.3,y:383,w:252,h:124,rot:-6.91,size:96,wt:800},
   {t:'our',x:144,y:139,w:137,h:83,rot:-3.88,size:64,wt:700},
   {t:'Today',x:145.5,y:0,w:417,h:166,rot:-10.44,size:128,wt:700}]},
- fr:{w:814,h:765,drop:['envolé',"s'est","l'açaí","Aujourd'hui,"],sub:['Désolés.','Reviens vite,',"on t'attend"],words:[
+ fr:{w:814,h:765,drop:["Aujourd'hui,","l'açaí","s'est",'envolé'],sub:['Désolés.','Reviens vite,',"on t'attend"],words:[
   {t:'Désolés.',x:245.2,y:527.7,w:320,h:93,rot:2.33,size:72,wt:700},
   {t:'Reviens vite,',x:0,y:577.2,w:814,h:124,rot:0,size:96,wt:700},
   {t:"on t'attend",x:224.6,y:665,w:382,h:83,rot:-2.5,size:64,wt:700},
