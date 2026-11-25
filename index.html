@@ -88,7 +88,8 @@
 
     <!-- Agotado -->
     <section class="screen" data-screen="soldout">
-      <video class="bg loop" src="export/video/onctuo_sold_out_loop.mp4" poster="export/onctuo_label_sold_out_en.png" muted loop playsinline></video>
+      <!-- one MP4 per language (animated text inside); the PNG fallback carries the Spanish text -->
+      <video class="bg loop" id="soldoutVideo" src="export/video/onctuo_sold_out_loop_es.mp4?v=1" poster="export/onctuo_label_sold_out_en.png?v=2" muted loop playsinline></video>
     </section>
 
   </div>
@@ -114,6 +115,6 @@
   <button data-go="soldout">Agotado</button>
   <button data-go="attract">Reiniciar</button>
 </nav>
-<script src="app.js?v=20261125b"></script>
+<script src="app.js?v=20261125c"></script>
 </body>
 </html>

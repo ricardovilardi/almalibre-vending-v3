@@ -1,0 +1,93 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<title>Agotado · texto animado</title>
+<!-- Text layer for the sold-out loop (export/video/onctuo_sold_out_loop.mp4, 1080×1920, 6.54 s).
+     Layout = Figma "agotado" (node 225:1154): one lockup per language.
+     Motion = kinetic "drop and stack" reference: the headline words fall in one by one from the top,
+     bottom word first, land with a small bounce and nudge the words already stacked; the subline pops in;
+     at the end everything drops out of the bottom so the 6.54 s loop starts empty again.
+     ?lang=es|en|fr  ?t=<s> (freeze)  ?bg=<image> (preview over a video frame)  ?render (transparent, driven by renderAt) -->
+<style>
+  @font-face{font-family:'Filson Pro';src:url('../captions/fonts/FilsonPro-Bold.otf') format('opentype');font-weight:700;font-display:block}
+  @font-face{font-family:'Filson Pro';src:url('../captions/fonts/FilsonPro-Heavy.otf') format('opentype');font-weight:800;font-display:block}
+  html,body{margin:0;background:transparent}
+  .stage{position:relative;width:1080px;height:1920px;overflow:hidden;background-size:cover}
+  .lockup{position:absolute;transform-origin:0 0}
+  .w{position:absolute;transform-origin:0 0;font-family:'Filson Pro';color:#fff;text-transform:uppercase;
+     letter-spacing:-.05em;white-space:pre;text-align:center;will-change:transform}
+  .w span{display:block;will-change:transform,opacity}
+</style></head>
+<body><div class="stage" id="stage"><div class="lockup" id="lockup"></div></div>
+<script>
+// geometry straight from Figma (px in the lockup frame; rot = Figma rotation, counter-clockwise)
+const L = {
+ es:{w:754,h:846,drop:['volado','ha ','Açaí','el','Hoy'],sub:['Lo sentimos','Vuelve pronto,','te esperamos'],words:[
+  {t:'Lo sentimos',x:149.3,y:610.4,w:452,h:93,rot:2.33,size:72,wt:700},
+  {t:'Vuelve pronto,',x:0,y:657.2,w:754,h:124,rot:0,size:96,wt:700},
+  {t:'te esperamos',x:159.6,y:743.5,w:452,h:83,rot:-2.5,size:64,wt:700},
+  {t:'Açaí',x:47.3,y:125,w:528,h:302,rot:-0.07,size:234,wt:800},
+  {t:'volado',x:133,y:413.3,w:588,h:186,rot:11.41,size:144,wt:800},
+  {t:'ha ',x:21,y:363,w:127,h:124,rot:20.76,size:96,wt:800},
+  {t:'el',x:163,y:125.1,w:72,h:83,rot:7.26,size:64,wt:700},
+  {t:'Hoy',x:191.9,y:0,w:272,h:166,rot:-12.85,size:128,wt:700}]},
+ en:{w:814,h:832,drop:['AWAY','flew','Açaí','our','Today'],sub:['Sorry!','Come back soon',"we'll be waiting"],words:[
+  {t:'Sorry!',x:278.2,y:590.4,w:254,h:93,rot:2.33,size:72,wt:700},
+  {t:'Come back soon',x:0,y:641.2,w:814,h:124,rot:0,size:96,wt:700},
+  {t:"we'll be waiting",x:150.7,y:725.8,w:531,h:83,rot:-2.5,size:64,wt:700},
+  {t:'Açaí',x:76,y:173.4,w:528,h:302,rot:4.28,size:234,wt:800},
+  {t:'AWAY',x:312.4,y:409.1,w:401,h:186,rot:9.34,size:144,wt:800},
+  {t:'flew',x:92.3,y:383,w:252,h:124,rot:-6.91,size:96,wt:800},
+  {t:'our',x:144,y:139,w:137,h:83,rot:-3.88,size:64,wt:700},
+  {t:'Today',x:145.5,y:0,w:417,h:166,rot:-10.44,size:128,wt:700}]},
+ fr:{w:814,h:765,drop:['envolé',"s'est","l'açaí","Aujourd'hui,"],sub:['Désolés.','Reviens vite,',"on t'attend"],words:[
+  {t:'Désolés.',x:245.2,y:527.7,w:320,h:93,rot:2.33,size:72,wt:700},
+  {t:'Reviens vite,',x:0,y:577.2,w:814,h:124,rot:0,size:96,wt:700},
+  {t:"on t'attend",x:224.6,y:665,w:382,h:83,rot:-2.5,size:64,wt:700},
+  {t:"l'açaí",x:55.5,y:74.3,w:658,h:302,rot:0.72,size:234,wt:800},
+  {t:'envolé',x:250,y:347.5,w:539,h:186,rot:9.34,size:144,wt:800},
+  {t:"s'est",x:29.9,y:285,w:237,h:124,rot:-6.91,size:96,wt:800},
+  {t:"Aujourd'hui,",x:62.5,y:0,w:573,h:109,rot:-2.38,size:84,wt:700}]}
+};
+const q = new URLSearchParams(location.search);
+const lang = q.get('lang') || 'es', D = L[lang];
+const SCALE = +(q.get('s') || 0.8), CX = +(q.get('cx') || 511.6), TOP = +(q.get('top') || 1121);   // Figma frame 165:37 (onctuo_label_sold_out_en): 80 %, lockup over Almita's legs
+const T0 = 0.15, STEP = 0.24, FALL = 0.45, DROP = 760;           // entry: one word every 0.24 s, 0.45 s fall from 760 px above
+const SUB0 = 0.25 + D.drop.length * STEP + 0.15, SUBSTEP = 0.14;  // subline pops after the stack
+const OUT = 5.7, LOOP = 157 / 24;                                  // exit: everything drops out, loop starts empty
+if (q.get('bg')) document.getElementById('stage').style.backgroundImage = `url(${q.get('bg')})`;
+const lk = document.getElementById('lockup');
+lk.style.left = (CX - D.w * SCALE / 2) + 'px'; lk.style.top = TOP + 'px'; lk.style.transform = `scale(${SCALE})`;
+const els = D.words.map(w => {
+  const o = document.createElement('div'); o.className = 'w';
+  Object.assign(o.style, {left: w.x + 'px', top: w.y + 'px', width: w.w + 'px', height: w.h + 'px',
+    lineHeight: w.h + 'px', fontSize: w.size + 'px', fontWeight: w.wt, transform: `rotate(${-w.rot}deg)`});
+  const s = document.createElement('span'); s.textContent = w.t; o.appendChild(s); lk.appendChild(o);
+  const di = D.drop.indexOf(w.t), si = D.sub.indexOf(w.t);
+  return {span: s, land: di >= 0 ? T0 + di * STEP + FALL * 0.35 : null, start: di >= 0 ? T0 + di * STEP : SUB0 + si * SUBSTEP, sub: si >= 0, yb: (w.y + w.h) / D.h, order: di >= 0 ? di : 10 + si};
+});
+const spring = p => 1 - Math.exp(-7 * p) * Math.cos(9 * p);         // overshoots ~8 % once: the bounce on landing
+const clamp = v => Math.max(0, Math.min(1, v));
+window.renderAt = t => {
+  const landings = els.filter(e => e.land != null).map(e => e.land);
+  for (const e of els) {
+    let y = 0, sc = 1, op = 1, r = 0;
+    if (t < e.start) { op = 0; }
+    else if (!e.sub) {
+      const p = clamp((t - e.start) / FALL); y = -DROP / SCALE * (1 - spring(p));
+      // words already on the stack get nudged down by every later landing (small damped bounce)
+      for (const Lt of landings) if (Lt > e.land && t > Lt) { const k = t - Lt; y += 22 * Math.exp(-9 * k) * Math.sin(14 * k); }
+    } else {
+      const p = clamp((t - e.start) / 0.4); sc = 0.55 + 0.45 * spring(p); op = clamp(p * 3);
+    }
+    // exit: free fall out of the bottom, like the reference
+    const te = OUT + (1 - e.yb) * 0.18;                              // bottom lines fall first, so nothing piles up
+    if (t > te) { const k = t - te; y += 0.5 * 9000 * k * k / SCALE; r = (e.order % 2 ? 1 : -1) * 30 * k; }
+    e.span.style.opacity = op;
+    e.span.style.transform = `translateY(${y}px) rotate(${r}deg) scale(${sc})`;
+  }
+};
+window.textReady = document.fonts.ready;
+const tf = q.get('t');
+if (tf != null) document.fonts.ready.then(() => renderAt(+tf));
+else if (!q.has('render')) { const s0 = performance.now(); const loop = () => { renderAt(((performance.now() - s0) / 1000) % LOOP); requestAnimationFrame(loop); }; document.fonts.ready.then(loop); }
+</script></body></html>

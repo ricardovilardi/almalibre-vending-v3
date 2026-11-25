@@ -138,6 +138,8 @@ $('#langSelect').addEventListener('change', e => {
   const l = e.target.value;
   attract.poster = `assets/attract-poster_${l}.jpg`;
   attract.src = `assets/video/attract_${l}.mp4?v=10`;
+  const so = $('#soldoutVideo'); so.src = `export/video/onctuo_sold_out_loop_${l}.mp4?v=1`;
+  if (state.screen === 'soldout') so.play().catch(() => {});
   if (state.screen === 'attract') attract.play().catch(() => {});
 });
 $('#soundBtn').addEventListener('click', e => {
